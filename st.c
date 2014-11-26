@@ -46,6 +46,18 @@ char *argv0;
  #include <libutil.h>
 #endif
 
+#if defined(__APPLE__)
+#include <sys/time.h>
+#define CLOCK_MONOTONIC 0
+int clock_gettime(int clk_id, struct timespec* t) {
+    struct timeval now;
+    int rv = gettimeofday(&now, NULL);
+    if (rv) return rv;
+    t->tv_sec  = now.tv_sec;
+    t->tv_nsec = now.tv_usec * 1000;
+    return 0;
+}
+#endif
 
 /* XEMBED messages */
 #define XEMBED_FOCUS_IN  4
